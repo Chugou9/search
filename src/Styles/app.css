@@ -1,0 +1,12 @@
+.container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.navigation-panel {
+    grid-column: span 4;
+}
+
+.search-results {
+    grid-column: span 8;
+}
