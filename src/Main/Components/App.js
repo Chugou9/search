@@ -4,6 +4,7 @@ import { ViewResultsComponentActions } from '../../Modules/ViewResultsComponent/
 import { ViewResultsComponentServices } from '../../Modules/ViewResultsComponent/Services/ViewResultsComponentServices';
 import {dispatch} from '../index';
 import { ResultsView } from './ResultsView/ResultsView';
+import { image } from 'faker';
 
 export class App extends HTMLElement {
     constructor() {
@@ -29,7 +30,7 @@ export class App extends HTMLElement {
         const resultsView = document.createElement('results-view');
         resultsView.searchPanelInputValue = searchPanelInputValue;
         resultsView.setAttribute('class', 'search-results');
-        resultsView.onChangeSearchPanelInputValue = this.handleChangeSearchPanelInputValue;
+        resultsView.onChangeSearchPanelInputValue = this.handleChangeSearchPanelInputWrapped;
         loadData();
         
         const container = document.createElement('div');
@@ -44,10 +45,7 @@ export class App extends HTMLElement {
 
         this.shadowRoot.appendChild(linkElem);
         this.shadowRoot.appendChild(container);
-        // container.setAttribute('class', 'container');
-        // const shadow = this.attachShadow({mode: 'open'});
-        // shadow.appendChild(container);
-        // console.log('hi');
+
         async function loadData() {
             const data = await viewComponentActions.getImages({
                 dataType: 'image',
@@ -59,7 +57,36 @@ export class App extends HTMLElement {
         }
     }
 
-    handleChangeSearchPanelInputValue = (value) => {
+    handleChangeSearchPanelInputValue = async (value) => {
         this.searchPanelInputValue = value;
+        const container = this.shadowRoot.querySelector('.container');
+        const resultsView = container.querySelector('results-view');
+        const viewComponentActions = new ViewResultsComponentActions(new ViewResultsComponentServices, dispatch);
+        
+        const data = await viewComponentActions.getImages({
+            dataType: 'image',
+            data: value,
+            amount: 50
+        });
+
+        resultsView.imageData = window.store.getState().ViewResultsState.asyncImages.data;
+        container.appendChild(resultsView);
+
+        this.shadowRoot.appendChild(container);
     };
+
+    wrapper = (func, time) => {
+        let isFuncCalled = false;
+        let timerId;
+
+        return function(...args) {
+            if (timerId) {
+                clearTimeout(timerId);
+            };
+
+            timerId = setTimeout(() => {func.apply(this, args)}, time);
+        }
+    };
+    
+    handleChangeSearchPanelInputWrapped = this.wrapper(this.handleChangeSearchPanelInputValue, 2000);
 }

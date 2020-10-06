@@ -13,9 +13,8 @@ export class ResultsView extends HTMLElement {
         searchImagePanel.value = this.searchPanelInputValue;
         searchImagePanel.onkeyup = (event) => {
             const value = event.target.value;
+
             this.onChangeSearchPanelInputValue(value);
-            console.log(value);
-            console.log(event);
         };
 
         const linkElem = document.createElement('link');
@@ -28,14 +27,6 @@ export class ResultsView extends HTMLElement {
         this.shadowRoot.appendChild(linkElem);
         this.shadowRoot.appendChild(searchImagePanel);
         this.shadowRoot.appendChild(resultsViewContainer);
-    }
-    connectedCallback() {
-        this.onChangeSearchPanelInputValue('');
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-
-
     }
 
     get imageData() {
@@ -53,17 +44,15 @@ export class ResultsView extends HTMLElement {
 
         if (Array.isArray(imageData) && imageData.length) {
             let imageContainers = [];
-            let tempImages = [];
             const resultsViewContainer = this.shadowRoot.getElementById('view-container');
-    
-            if (Array.isArray(imageData) && imageData.length) {
-                imageContainers = imageData.map((imageLink, index) => {
-                    const imageContainer = new ImagePreviewComponent(imageLink, '100', '100');
-                    imageContainer.setAttribute('class', 'image');
+            resultsViewContainer.innerHTML = null;
 
-                    return imageContainer;
-                })
-            }
+            imageContainers = imageData.map((imageLink, index) => {
+                const imageContainer = new ImagePreviewComponent(imageLink, '100', '100');
+                imageContainer.setAttribute('class', 'image');
+
+                return imageContainer;
+            });
             imageContainers.length && resultsViewContainer.append(...imageContainers);
         }
 
