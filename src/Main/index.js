@@ -1,5 +1,10 @@
-import {App} from './Components/App.js';
+import {App} from './Components/App';
+import {configureStore} from '../Common/Store/ReduxStore';
 
-customElements.define(app, App);
+const store = configureStore();
+window.store = store;
+export const dispatch = store.dispatch;
 
-document.append(app);
+customElements.define('app-container', App);
+const application = document.createElement("app-container");
+document.body.appendChild(application);

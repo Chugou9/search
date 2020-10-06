@@ -10,3 +10,33 @@
 .search-results {
     grid-column: span 8;
 }
+
+.results-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    border: 0.5px solid grey;
+    border-radius: 4px;
+    padding-left: 16px;
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 8px;
+}
+
+.search-panel__input {
+    margin-bottom: 4px;
+    width: 260px;
+    height: 32px;
+    border: 0.5px solid whitesmoke;
+    border-radius: 4px;
+}
+
+.image {
+    padding-right: 4px;
+}
+
+.image-container {
+    padding: 2px;
+    margin-right: 4px;
+    display: inline-block;
+}

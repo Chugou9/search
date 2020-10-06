@@ -1,12 +1,20 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.export = {
-    context: path.resolve(__dirname, 'src'),
+
+module.exports = {
+    context: path.resolve(__dirname, 'src/Main'),
     mode: "development",
     devtool: "inline-source-map",
-    entry: "src/Main/index.js",
+    entry: "./index.js",
+    devServer: {
+        contentBase: path.resolve(__dirname, 'dist'),
+        compress: true,
+        port: 8080,
+        hot: true
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: "bundle.js"
@@ -23,19 +31,24 @@ module.export = {
                 ],
                 loader: "babel-loader",
                 options: {
-                    presets: ['es2015']
+                    presets: ["@babel/preset-env"]
                 }
             },
             {
-                test: /\.css$/,
+                test: /\.css$/i,
+                include: [
+                    path.resolve(__dirname, 'src')
+                ],
+                exclude:[path.resolve(__dirname, 'node_modules')],
                 use: [
-                    { loader: "style-loader" },
                     {
-                        loader: "css-loader",
+                        loader: MiniCssExtractPlugin.loader,
                         options: {
-                            modules: true
-                        }
-                    }
+                            // hmr: process.env.NODE_ENV === 'development',
+                            reloadAll: true
+                        },
+                    },
+                    'css-loader',
                 ]
             }
         ]
@@ -47,13 +60,18 @@ module.export = {
         ],
         extensions: ['.js', '.json', '.css'],
         alias: {
-            "Common": path.resolve(__dirname, 'src/Common'),
-            "Main": path.resolve(__dirname, 'src/Main'),
+            Common: path.resolve(__dirname, 'src/Common'),
+            Main: path.resolve(__dirname, 'src/Main'),
+            'Styles': path.resolve(__dirname, 'src/Styles')
         }
     },
     target: "web",
     plugins: [
         new CleanWebpackPlugin(),
-        new HtmlWebpackPlugin({template: './src/Main/index.html'})
+        new HtmlWebpackPlugin({template: 'index.html'}),
+        new MiniCssExtractPlugin({
+            filename: 'app.css',
+            chunkFilename: '[id].css',
+        }),
     ]
 };
